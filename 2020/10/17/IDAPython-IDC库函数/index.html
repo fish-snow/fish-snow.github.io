@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="懒狗，长期跟新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于IDAPython中IDC库部分函数介绍">
+<meta property="og:url" content="http://example.com/2020/10/17/IDAPython-IDC%E5%BA%93%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:site_name" content="Fish">
+<meta property="og:description" content="懒狗，长期跟新">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016230038564.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016225757540.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016225922509.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016230000570.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016230747646.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016231018291.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016231939715.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016232426135.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016234354329.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016234538154.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017000816804.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017000901680.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017001040848.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017001427434.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017002026104.png">
+<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017001910445.png">
+<meta property="article:published_time" content="2020-10-16T16:21:28.536Z">
+<meta property="article:modified_time" content="2020-10-16T16:21:15.157Z">
+<meta property="article:author" content="Fish">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016230038564.png">
+
+<link rel="canonical" href="http://example.com/2020/10/17/IDAPython-IDC%E5%BA%93%E5%87%BD%E6%95%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>关于IDAPython中IDC库部分函数介绍 | Fish</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Fish</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/17/IDAPython-IDC%E5%BA%93%E5%87%BD%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fish">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fish">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          关于IDAPython中IDC库部分函数介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-10-17 00:21:28 / Modified: 00:21:15" itemprop="dateCreated datePublished" datetime="2020-10-17T00:21:28+08:00">2020-10-17</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>懒狗，长期跟新</p>
+<a id="more"></a>
+
+<h3 id="获取屏幕光标处地址函数"><a href="#获取屏幕光标处地址函数" class="headerlink" title="获取屏幕光标处地址函数"></a>获取屏幕光标处地址函数</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="center">函数名</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">long MinEA()</td>
+<td align="center">获取idb文件中最小的虚拟地址</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">long MaxEA()</td>
+<td align="center">获取idb文件中最大的虚拟地址</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">long here()</td>
+<td align="center">获取idb文件中光标所在处的虚拟地址</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">long ScreenEA()</td>
+<td align="center">获取idb文件中光标所在处的虚拟地址</td>
+</tr>
+</tbody></table>
+<h6 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">ea = MinEA()</span><br><span class="line">print(<span class="string">&quot;MinEA :&quot;</span>,hex(ea))</span><br><span class="line"></span><br><span class="line">ea = MaxEA()</span><br><span class="line">print(<span class="string">&quot;MaxEA :&quot;</span>,hex(ea))</span><br><span class="line"></span><br><span class="line">ea = here()</span><br><span class="line">print(<span class="string">&quot;hereEA :&quot;</span>,hex(ea))</span><br><span class="line"></span><br><span class="line">ea = idc.ScreenEA()</span><br><span class="line">print(<span class="string">&quot;ScreenEA :&quot;</span>,hex(ea))</span><br></pre></td></tr></table></figure>
+
+<h6 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h6><p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016230038564.png" alt="image-20201016230038564"></p>
+<h6 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h6><p>屏幕光标处地址：</p>
+<p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016225757540.png" alt="image-20201016225757540"></p>
+<p>最小虚拟地址：</p>
+<p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016225922509.png" alt="image-20201016225922509"></p>
+<p>最大虚拟地址：</p>
+<p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016230000570.png" alt="image-20201016230000570"></p>
+<h3 id="读取和修改数据的函数"><a href="#读取和修改数据的函数" class="headerlink" title="读取和修改数据的函数"></a>读取和修改数据的函数</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="center">函数名及参数</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">long Byte(long addr)</td>
+<td align="center">从虚拟地址addr处读取一个字节值</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">long Word(long addr)</td>
+<td align="center">从虚拟地址addr处读取一个字值</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">long Dword(long addr)</td>
+<td align="center">从虚拟地址addr处读取一个双字值</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">void PatchByte(long addr, long addr)</td>
+<td align="center">设置虚拟地址addr处的一个字节值</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">void PatchWord(long addr, long val)</td>
+<td align="center">设置虚拟地址addr处的一个字值</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">void PatchDword(long addr, long val)</td>
+<td align="center">设置虚拟地址addr处的一个双字值</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="center">bool isLoaded(long addr)</td>
+<td align="center">如果虚拟地址addr处包含有效数据，返回1，否则返回0</td>
+</tr>
+</tbody></table>
+<h5 id="读取函数示例"><a href="#读取函数示例" class="headerlink" title="读取函数示例"></a>读取函数示例</h5><h6 id="测试代码-1"><a href="#测试代码-1" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line">addr = <span class="number">0x00404000</span></span><br><span class="line"></span><br><span class="line">print(hex(idc.Byte(addr)))</span><br><span class="line">print(hex(idc.Word(addr)))</span><br><span class="line">print(hex(idc.Dword(addr)))</span><br></pre></td></tr></table></figure>
+
+<p>我选取开始虚拟地址为addr = 0x00404000，内存中16进制代码下图所示：</p>
+<p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016230747646.png" alt="image-20201016230747646"></p>
+<h6 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h6><p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016231018291.png" alt="image-20201016231018291"></p>
+<h5 id="PatchXXX（修改）函数示例"><a href="#PatchXXX（修改）函数示例" class="headerlink" title="PatchXXX（修改）函数示例"></a>PatchXXX（修改）函数示例</h5><h6 id="测试代码-2"><a href="#测试代码-2" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">addr = <span class="number">0x00404000</span></span><br><span class="line">idc.PatchByte(addr,<span class="number">0x61</span>)</span><br><span class="line">addr = <span class="number">0x00404001</span></span><br><span class="line">idc.PatchWord(addr,<span class="number">0x6161</span>)</span><br><span class="line">addr = <span class="number">0x00404003</span></span><br><span class="line">idc.PatchDword(addr,<span class="number">0x61616161</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h6><p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016231939715.png" alt="image-20201016231939715"></p>
+<p>前7个字节全部被修改成 0x61 对应的ASCII值为 a</p>
+<h5 id="检测函数示例"><a href="#检测函数示例" class="headerlink" title="检测函数示例"></a>检测函数示例</h5><h6 id="测试代码-3"><a href="#测试代码-3" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">addr = <span class="number">0x00404000</span></span><br><span class="line">_bool = idc.isLoaded(addr)</span><br><span class="line">print(_bool)</span><br></pre></td></tr></table></figure>
+
+<p>该检测地址数据参照上图</p>
+<h6 id="输出-2"><a href="#输出-2" class="headerlink" title="输出"></a>输出</h6><p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016232426135.png" alt="image-20201016232426135"></p>
+<h3 id="操纵数据库名称函数"><a href="#操纵数据库名称函数" class="headerlink" title="操纵数据库名称函数"></a>操纵数据库名称函数</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="center">函数名及参数与返回值</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">string Name(long addr)</td>
+<td align="center">返回与地址有关的名称，如果该位置没有名称，则返回空字符串。如果名称被标记为局部名称，这个函数并不返回用户定义的名称</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">string NameEx(long from, long addr)</td>
+<td align="center">返回与addr有关的名称。如果该位置没有名称，则返回空字符串</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">bool MakeNameEx(long addr, string name, long flags)</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">long LocByName(string name)</td>
+<td align="center">返回一个位置（名称已给定）的地址。如果数据库中没有这个名称，则返回BADADDR(-1)</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">long LocByNameEx(long funcaddr, string localname)</td>
+<td align="center">在包含funcaddr的函数中搜索给定的局部名称。如果给定的函数中没有这个名称,则返回BADADDR(-1)</td>
+</tr>
+</tbody></table>
+<h5 id="函数1示例"><a href="#函数1示例" class="headerlink" title="函数1示例"></a>函数1示例</h5><h6 id="测试代码-4"><a href="#测试代码-4" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">addr = [<span class="number">0x004016B3</span>,<span class="number">0x0040158A</span>,<span class="number">0x00401500</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(addr)):</span><br><span class="line">    function_name = idc.Name(addr[i])</span><br><span class="line">    print(function_name)</span><br></pre></td></tr></table></figure>
+
+<h6 id="测试数据"><a href="#测试数据" class="headerlink" title="测试数据"></a>测试数据</h6><p>图中选中的三个函数，Start列的数据为函数的起始地址</p>
+<p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016234354329.png" alt="image-20201016234354329"></p>
+<h6 id="输出-3"><a href="#输出-3" class="headerlink" title="输出"></a>输出</h6><p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016234538154.png" alt="image-20201016234538154"></p>
+<h3 id="处理函数的函数"><a href="#处理函数的函数" class="headerlink" title="处理函数的函数"></a>处理函数的函数</h3><table>
+<thead>
+<tr>
+<th>序号</th>
+<th>函数名，参数及返回值</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>long GetFunctionAttr(long addr, long attrib)</td>
+<td>返回包含给定地址的函数的被请求的属性(属性见下文)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>string GetFunctionName(long addr)</td>
+<td>返回包含给定地址的函数名称。如果给定的地址并不属于一个函数，则返回一个空字符串</td>
+</tr>
+<tr>
+<td>3</td>
+<td>long NextFunction(long addr)</td>
+<td>返回给定地址之前距离最近的函数的起始地址。如果在给定地址后没有其他函数，则返回-1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>long PrevFunction(long addr)</td>
+<td>返回给定地址之前距离最近的函数起始地址。如果在给定地址之前没有函数，则返回-1</td>
+</tr>
+</tbody></table>
+<h5 id="函数1示例-1"><a href="#函数1示例-1" class="headerlink" title="函数1示例"></a>函数1示例</h5><p>在演示函数1之前先记住两个属性(也就是该函数的第二个参数)</p>
+<p>1.FUNCATTR_START   表示函数起始位置</p>
+<p>2.FUNCATTR_END      表示函数结束位置</p>
+<h6 id="测试代码-5"><a href="#测试代码-5" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">addr = <span class="number">0x004016ED</span></span><br><span class="line"></span><br><span class="line">addr_start = idc.GetFunctionAttr(addr,FUNCATTR_START)</span><br><span class="line">addr_end = idc.GetFunctionAttr(addr,FUNCATTR_END)</span><br><span class="line">print(<span class="string">&quot;function start addr: &quot;</span>+str(hex(addr_start)))</span><br><span class="line">print(<span class="string">&quot;function end addr: &quot;</span>+str(hex(addr_end)))</span><br></pre></td></tr></table></figure>
+
+<p>我选取的 w_main 函数中间的一个虚拟地址    0x004016ED</p>
+<p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017000816804.png" alt="image-20201017000816804"></p>
+<h6 id="输出-4"><a href="#输出-4" class="headerlink" title="输出"></a>输出</h6><p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017000901680.png" alt="image-20201017000901680"></p>
+<h6 id="验证-1"><a href="#验证-1" class="headerlink" title="验证"></a>验证</h6><p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017001040848.png" alt="image-20201017001040848"></p>
+<p>函数起始地址为 0x004016B3 长度length 为0x233,用计算器计算得</p>
+<p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017001427434.png" alt="image-20201017001427434"></p>
+<h5 id="函数2示例"><a href="#函数2示例" class="headerlink" title="函数2示例"></a>函数2示例</h5><p>用函数地址打印下图三个函数名</p>
+<p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017002026104.png" alt="image-20201017002026104"></p>
+<h6 id="测试代码-6"><a href="#测试代码-6" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">addr = [<span class="number">0x004016B3</span>,<span class="number">0x004018F0</span>,<span class="number">0x00401940</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(addr)):</span><br><span class="line">    addr_name = idc.GetFunctionName(addr[i])</span><br><span class="line">    print(addr_name)</span><br></pre></td></tr></table></figure>
+
+<h6 id="输出-5"><a href="#输出-5" class="headerlink" title="输出"></a>输出</h6><p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201017001910445.png" alt="image-20201017001910445"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/03/Picgo/" rel="prev" title="Picgo">
+      <i class="fa fa-chevron-left"></i> Picgo
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%B1%8F%E5%B9%95%E5%85%89%E6%A0%87%E5%A4%84%E5%9C%B0%E5%9D%80%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">获取屏幕光标处地址函数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">验证</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E5%92%8C%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">读取和修改数据的函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.0.1.</span> <span class="nav-text">读取函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-1"><span class="nav-number">2.0.1.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-1"><span class="nav-number">2.0.1.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PatchXXX%EF%BC%88%E4%BF%AE%E6%94%B9%EF%BC%89%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.0.2.</span> <span class="nav-text">PatchXXX（修改）函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-2"><span class="nav-number">2.0.2.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C"><span class="nav-number">2.0.2.2.</span> <span class="nav-text">结果</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.0.3.</span> <span class="nav-text">检测函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-3"><span class="nav-number">2.0.3.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-2"><span class="nav-number">2.0.3.2.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E7%BA%B5%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E7%A7%B0%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">操纵数据库名称函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B01%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.0.1.</span> <span class="nav-text">函数1示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-4"><span class="nav-number">3.0.1.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE"><span class="nav-number">3.0.1.2.</span> <span class="nav-text">测试数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-3"><span class="nav-number">3.0.1.3.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">处理函数的函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B01%E7%A4%BA%E4%BE%8B-1"><span class="nav-number">4.0.1.</span> <span class="nav-text">函数1示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-5"><span class="nav-number">4.0.1.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-4"><span class="nav-number">4.0.1.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81-1"><span class="nav-number">4.0.1.3.</span> <span class="nav-text">验证</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B02%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.0.2.</span> <span class="nav-text">函数2示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-6"><span class="nav-number">4.0.2.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-5"><span class="nav-number">4.0.2.2.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fish</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fish</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
