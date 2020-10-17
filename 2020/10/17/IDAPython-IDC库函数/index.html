@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201016225922509.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201016230000570.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201016230747646.png">
-<meta property="og:image" content="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016231018291.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201016231018291.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201016231939715.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201016232426135.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201016234354329.png">
@@ -43,7 +43,7 @@
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017002026104.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017001910445.png">
 <meta property="article:published_time" content="2020-10-16T16:21:28.536Z">
-<meta property="article:modified_time" content="2020-10-17T07:12:15.476Z">
+<meta property="article:modified_time" content="2020-10-17T10:46:46.231Z">
 <meta property="article:author" content="Fish">
 <meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary">
@@ -146,12 +146,12 @@
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">1</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">0</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">2</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">3</span></a>
 
   </li>
   </ul>
@@ -206,16 +206,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2020-10-17 00:21:28 / Modified: 15:12:15" itemprop="dateCreated datePublished" datetime="2020-10-17T00:21:28+08:00">2020-10-17</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">安全</span></a>
-                </span>
+              <time title="Created: 2020-10-17 00:21:28 / Modified: 18:46:46" itemprop="dateCreated datePublished" datetime="2020-10-17T00:21:28+08:00">2020-10-17</time>
             </span>
 
           
@@ -319,7 +310,7 @@
 
 <p>我选取开始虚拟地址为addr = 0x00404000，内存中16进制代码下图所示：</p>
 <p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201016230747646.png" alt="image-20201016230747646"></p>
-<h6 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h6><p><img src="http://qhvo7t9d8.hn-bkt.clouddn.com/picgo/image-20201016231018291.png" alt="image-20201016231018291"></p>
+<h6 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h6><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201016231018291.png" alt="image-20201016231018291"></p>
 <h5 id="PatchXXX（修改）函数示例"><a href="#PatchXXX（修改）函数示例" class="headerlink" title="PatchXXX（修改）函数示例"></a>PatchXXX（修改）函数示例</h5><h6 id="测试代码-2"><a href="#测试代码-2" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">addr = <span class="number">0x00404000</span></span><br><span class="line">idc.PatchByte(addr,<span class="number">0x61</span>)</span><br><span class="line">addr = <span class="number">0x00404001</span></span><br><span class="line">idc.PatchWord(addr,<span class="number">0x6161</span>)</span><br><span class="line">addr = <span class="number">0x00404003</span></span><br><span class="line">idc.PatchDword(addr,<span class="number">0x61616161</span>)</span><br></pre></td></tr></table></figure>
 
 <h6 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h6><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201016231939715.png" alt="image-20201016231939715"></p>
@@ -433,7 +424,10 @@
     <a href="/2020/10/03/Picgo/" rel="prev" title="Picgo">
       <i class="fa fa-chevron-left"></i> Picgo
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/17/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" rel="next" title="汇编语言(8086CUP)">
+      汇编语言(8086CUP) <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -508,13 +502,9 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">posts</span>
         </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">categories</span>
       </div>
       <div class="site-state-item site-state-tags">
         <span class="site-state-item-count">1</span>
