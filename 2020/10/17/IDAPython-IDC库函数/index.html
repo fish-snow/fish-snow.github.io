@@ -43,8 +43,12 @@
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017001427434.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017002026104.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017001910445.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201019231319260.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201019231543545.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201019233108202.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201019233138346.png">
 <meta property="article:published_time" content="2020-10-16T16:21:28.536Z">
-<meta property="article:modified_time" content="2020-10-17T14:49:48.488Z">
+<meta property="article:modified_time" content="2020-10-19T15:36:33.651Z">
 <meta property="article:author" content="Fish">
 <meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary">
@@ -205,10 +209,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-10-17 00:21:28 / Modified: 22:49:48" itemprop="dateCreated datePublished" datetime="2020-10-17T00:21:28+08:00">2020-10-17</time>
+              <time title="Created: 2020-10-17 00:21:28" itemprop="dateCreated datePublished" datetime="2020-10-17T00:21:28+08:00">2020-10-17</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-10-19 23:36:33" itemprop="dateModified" datetime="2020-10-19T23:36:33+08:00">2020-10-19</time>
+              </span>
 
           
 
@@ -380,15 +390,15 @@
 <tr>
 <td>3</td>
 <td>long NextFunction(long addr)</td>
-<td>返回给定地址之前距离最近的函数的起始地址。如果在给定地址后没有其他函数，则返回-1</td>
+<td>返回给定地址后的下一个函数的起始地址。如果数据库中给定地址后没有其他函数，则返回-1</td>
 </tr>
 <tr>
 <td>4</td>
 <td>long PrevFunction(long addr)</td>
-<td>返回给定地址之前距离最近的函数起始地址。如果在给定地址之前没有函数，则返回-1</td>
+<td>返回给定地址之前距离最近的函数的起始地址。如果在给定地址之前没有函数，则返回-1</td>
 </tr>
 </tbody></table>
-<h5 id="函数1示例-1"><a href="#函数1示例-1" class="headerlink" title="函数1示例"></a>函数1示例</h5><p>在演示函数1之前先记住两个属性(也就是该函数的第二个参数)</p>
+<h5 id="GetFunctionAttr函数示例"><a href="#GetFunctionAttr函数示例" class="headerlink" title="GetFunctionAttr函数示例"></a>GetFunctionAttr函数示例</h5><p>在演示函数1之前先记住两个属性(也就是该函数的第二个参数)</p>
 <p>1.FUNCATTR_START   表示函数起始位置</p>
 <p>2.FUNCATTR_END      表示函数结束位置</p>
 <h6 id="测试代码-5"><a href="#测试代码-5" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">addr = <span class="number">0x004016ED</span></span><br><span class="line"></span><br><span class="line">addr_start = idc.GetFunctionAttr(addr,FUNCATTR_START)</span><br><span class="line">addr_end = idc.GetFunctionAttr(addr,FUNCATTR_END)</span><br><span class="line">print(<span class="string">&quot;function start addr: &quot;</span>+str(hex(addr_start)))</span><br><span class="line">print(<span class="string">&quot;function end addr: &quot;</span>+str(hex(addr_end)))</span><br></pre></td></tr></table></figure>
@@ -399,12 +409,57 @@
 <h6 id="验证-1"><a href="#验证-1" class="headerlink" title="验证"></a>验证</h6><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017001040848.png" alt="image-20201017001040848"></p>
 <p>函数起始地址为 0x004016B3 长度length 为0x233,用计算器计算得</p>
 <p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017001427434.png" alt="image-20201017001427434"></p>
-<h5 id="函数2示例"><a href="#函数2示例" class="headerlink" title="函数2示例"></a>函数2示例</h5><p>用函数地址打印下图三个函数名</p>
+<h5 id="GetFunctionName函数示例"><a href="#GetFunctionName函数示例" class="headerlink" title="GetFunctionName函数示例"></a>GetFunctionName函数示例</h5><p>用函数地址打印下图三个函数名</p>
 <p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017002026104.png" alt="image-20201017002026104"></p>
 <h6 id="测试代码-6"><a href="#测试代码-6" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">addr = [<span class="number">0x004016B3</span>,<span class="number">0x004018F0</span>,<span class="number">0x00401940</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(addr)):</span><br><span class="line">    addr_name = idc.GetFunctionName(addr[i])</span><br><span class="line">    print(addr_name)</span><br></pre></td></tr></table></figure>
 
 <h6 id="输出-5"><a href="#输出-5" class="headerlink" title="输出"></a>输出</h6><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017001910445.png" alt="image-20201017001910445"></p>
+<h5 id="NextFunction函数示例"><a href="#NextFunction函数示例" class="headerlink" title="NextFunction函数示例"></a>NextFunction函数示例</h5><p>用该函数可以打印出_main的下一个函数   _printf函数的地址</p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201019231319260.png" alt="image-20201019231319260"></p>
+<h6 id="测试代码-7"><a href="#测试代码-7" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">addr = <span class="number">0x00401000</span></span><br><span class="line">next_addr = idc.NextFunction(addr)</span><br><span class="line">print(idc.GetFunctionName(next_addr))</span><br><span class="line">print(next_addr)</span><br></pre></td></tr></table></figure>
 
+<h6 id="输出-6"><a href="#输出-6" class="headerlink" title="输出"></a>输出</h6><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201019231543545.png" alt="image-20201019231543545"></p>
+<p>PrveFunction函数功能相似，不再做演示</p>
+<h3 id="代码交叉引用函数"><a href="#代码交叉引用函数" class="headerlink" title="代码交叉引用函数"></a>代码交叉引用函数</h3><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="center">函数名，参数及返回值</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">long Rfirst(long from)</td>
+<td align="center">返回给定地址向其转交控制权的第一个位置。如果给定的地址没有引用其他地址，则返回-1</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">long Rnext(long from, long current)</td>
+<td align="center">如果current已经在前一次调用Rfirst或者Rnext时返回，则返回给定地址转交控制权的下一个位置。如果没有其他交叉引用存在，则返回-1</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">long XrefType()</td>
+<td align="center">返回一个常量，说明某一个交叉引用查询函数返回的最后一个交叉引用的类型</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">long RfirstB(long to, long current)</td>
+<td align="center">返回转交控制权到给定地址的第一个位置。如果不存在对给定地址的交叉引用，则返回-1</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">long RnextB(long to, long current)</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<h4 id="Rfirst函数示例"><a href="#Rfirst函数示例" class="headerlink" title="Rfirst函数示例"></a>Rfirst函数示例</h4><h6 id="测试代码-8"><a href="#测试代码-8" class="headerlink" title="测试代码"></a>测试代码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"></span><br><span class="line">addr = <span class="number">0x00401000</span></span><br><span class="line">next_addr = idc.Rfirst(addr)</span><br><span class="line">print(hex(next_addr))</span><br></pre></td></tr></table></figure>
+
+<h6 id="输出-7"><a href="#输出-7" class="headerlink" title="输出"></a>输出</h6><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201019233108202.png" alt="image-20201019233108202"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201019233138346.png" alt="image-20201019233138346"></p>
+<p>说简单点就是返回当前指令的吓一条指令</p>
+<h4 id="Rnext函数示例"><a href="#Rnext函数示例" class="headerlink" title="Rnext函数示例"></a>Rnext函数示例</h4><h6 id="测试代码-9"><a href="#测试代码-9" class="headerlink" title="测试代码"></a>测试代码</h6>
     </div>
 
     
@@ -487,7 +542,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%B1%8F%E5%B9%95%E5%85%89%E6%A0%87%E5%A4%84%E5%9C%B0%E5%9D%80%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">获取屏幕光标处地址函数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">验证</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E5%92%8C%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">读取和修改数据的函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.0.1.</span> <span class="nav-text">读取函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-1"><span class="nav-number">2.0.1.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-1"><span class="nav-number">2.0.1.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PatchXXX%EF%BC%88%E4%BF%AE%E6%94%B9%EF%BC%89%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.0.2.</span> <span class="nav-text">PatchXXX（修改）函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-2"><span class="nav-number">2.0.2.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C"><span class="nav-number">2.0.2.2.</span> <span class="nav-text">结果</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.0.3.</span> <span class="nav-text">检测函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-3"><span class="nav-number">2.0.3.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-2"><span class="nav-number">2.0.3.2.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E7%BA%B5%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E7%A7%B0%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">操纵数据库名称函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B01%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.0.1.</span> <span class="nav-text">函数1示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-4"><span class="nav-number">3.0.1.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE"><span class="nav-number">3.0.1.2.</span> <span class="nav-text">测试数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-3"><span class="nav-number">3.0.1.3.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">处理函数的函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B01%E7%A4%BA%E4%BE%8B-1"><span class="nav-number">4.0.1.</span> <span class="nav-text">函数1示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-5"><span class="nav-number">4.0.1.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-4"><span class="nav-number">4.0.1.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81-1"><span class="nav-number">4.0.1.3.</span> <span class="nav-text">验证</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B02%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.0.2.</span> <span class="nav-text">函数2示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-6"><span class="nav-number">4.0.2.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-5"><span class="nav-number">4.0.2.2.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%B1%8F%E5%B9%95%E5%85%89%E6%A0%87%E5%A4%84%E5%9C%B0%E5%9D%80%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">获取屏幕光标处地址函数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">验证</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E5%92%8C%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">读取和修改数据的函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.0.1.</span> <span class="nav-text">读取函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-1"><span class="nav-number">2.0.1.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-1"><span class="nav-number">2.0.1.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PatchXXX%EF%BC%88%E4%BF%AE%E6%94%B9%EF%BC%89%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.0.2.</span> <span class="nav-text">PatchXXX（修改）函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-2"><span class="nav-number">2.0.2.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C"><span class="nav-number">2.0.2.2.</span> <span class="nav-text">结果</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.0.3.</span> <span class="nav-text">检测函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-3"><span class="nav-number">2.0.3.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-2"><span class="nav-number">2.0.3.2.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E7%BA%B5%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E7%A7%B0%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">操纵数据库名称函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B01%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.0.1.</span> <span class="nav-text">函数1示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-4"><span class="nav-number">3.0.1.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE"><span class="nav-number">3.0.1.2.</span> <span class="nav-text">测试数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-3"><span class="nav-number">3.0.1.3.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">处理函数的函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#GetFunctionAttr%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.0.1.</span> <span class="nav-text">GetFunctionAttr函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-5"><span class="nav-number">4.0.1.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-4"><span class="nav-number">4.0.1.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81-1"><span class="nav-number">4.0.1.3.</span> <span class="nav-text">验证</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GetFunctionName%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.0.2.</span> <span class="nav-text">GetFunctionName函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-6"><span class="nav-number">4.0.2.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-5"><span class="nav-number">4.0.2.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#NextFunction%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.0.3.</span> <span class="nav-text">NextFunction函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-7"><span class="nav-number">4.0.3.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-6"><span class="nav-number">4.0.3.2.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-number">5.</span> <span class="nav-text">代码交叉引用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Rfirst%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">5.1.</span> <span class="nav-text">Rfirst函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-8"><span class="nav-number">5.1.0.1.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-7"><span class="nav-number">5.1.0.2.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Rnext%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">5.2.</span> <span class="nav-text">Rnext函数示例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81-9"><span class="nav-number">5.2.0.1.</span> <span class="nav-text">测试代码</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
