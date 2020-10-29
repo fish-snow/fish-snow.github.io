@@ -59,7 +59,7 @@
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027231722194.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027231924563.png">
 <meta property="article:published_time" content="2020-10-26T15:22:27.755Z">
-<meta property="article:modified_time" content="2020-10-28T13:08:57.928Z">
+<meta property="article:modified_time" content="2020-10-29T16:08:43.504Z">
 <meta property="article:author" content="Fish">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201028210403593.png">
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-10-28 21:08:57" itemprop="dateModified" datetime="2020-10-28T21:08:57+08:00">2020-10-28</time>
+                <time title="Modified: 2020-10-30 00:08:43" itemprop="dateModified" datetime="2020-10-30T00:08:43+08:00">2020-10-30</time>
               </span>
 
           
@@ -246,22 +246,22 @@
 <a id="more"></a>
 
 <p><strong>分析文件为Visual C 6++所编译的文件。PEiD为脱壳后的v0.94版</strong></p>
-<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026205538679.png" alt="image-20201026205538679" style="zoom: 67%;" />
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026205538679.png" alt="" style="zoom: 67%;" />
 
 <p>PE文件中没有上图表示字符串，可以猜测到PEiD内置了不同版本的编译器信息，通过解析文件的特征码进行对照，从而判断出该文件为哪种编译器所编译。</p>
 <h4 id="x32定位字符串"><a href="#x32定位字符串" class="headerlink" title="x32定位字符串"></a>x32定位字符串</h4><ul>
 <li>查找所对应的字符串，及调用位置</li>
 </ul>
 <p>在X32中智能搜索字符串，下断点定位过去</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026210214405.png" alt="image-20201026210214405"></p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026210406548.png" alt="image-20201026210406548"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026210214405.png"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026210406548.png"></p>
 <p>通过函数引用再次定位，定位到地址438D13处</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026211925797.png" alt="image-20201026211925797"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026211925797.png"></p>
 <p>得到信息，PE头地址存入寄存器EAX中，.text节头地址存入寄存器EDX中</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026212137693.png" alt="image-20201026212137693"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026212137693.png"></p>
 <p>得到上述信息后，使用IDA静态分析</p>
 <ul>
-<li>PE中节的知识<br><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026212656056.png" alt="image-20201026212656056"></li>
+<li>PE中节的知识<br><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026212656056.png"></li>
 </ul>
 <h4 id="IDA静态分析"><a href="#IDA静态分析" class="headerlink" title="IDA静态分析"></a>IDA静态分析</h4><h5 id="分析1"><a href="#分析1" class="headerlink" title="分析1"></a>分析1</h5><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026221402781.png" alt="image-20201026221402781"></p>
 <p>​    这里解释一下，在PE结构中，一个节的大小为40,转化为16进制为28H。IDA中ecx存储节的数量 <strong>乘5</strong> 在与之 <strong>乘8</strong> 也就是 *<em>（NumberOfSection(节的数量)  * 40）*</em>，相当于计算该PE的节在文件内存中所占大小，在加上edx(指向.text节首地址的指针)，相当于定位到了节的最后面。</p>
@@ -274,13 +274,13 @@
 <h5 id="分析3"><a href="#分析3" class="headerlink" title="分析3"></a>分析3</h5><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026221905060.png" alt="image-20201026221905060"  />
 
 <h4 id="X32动态分析1"><a href="#X32动态分析1" class="headerlink" title="X32动态分析1"></a>X32动态分析1</h4><h5 id="分析1-1"><a href="#分析1-1" class="headerlink" title="分析1"></a>分析1</h5><p>在这个函数的开始地址处，开辟了大量的栈空间，定义了大量的一字节数据变量，用于存取PE文件的特征码，但是上面的分析并没有用到特征码。所以用动调的方式再次分析，将最后的跳转nop掉，分析特征码的作用。</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026223447239.png" alt="image-20201026223447239"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026223447239.png"></p>
 <p>观察此时的寄存器，ECX存储的为指向.text节首地址的指针，EDX中存储的为程序的OEP。</p>
 <p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026223617001.png" alt="image-20201026223617001"></p>
 <h5 id="分析2-1"><a href="#分析2-1" class="headerlink" title="分析2"></a>分析2</h5><p>当OEP的VA不在.data节或者.text节中的，会将其开始的字节码与内置的特征码进行比较，其判断该程序所使用的编译器是哪个版本</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026224943273.png" alt="image-20201026224943273"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026224943273.png"></p>
 <h5 id="分析3-1"><a href="#分析3-1" class="headerlink" title="分析3"></a>分析3</h5><p>继续向下跟踪，一直F8，这里的比较方式和在IDA中的比较方式一样，唯一的不同点就是多加了一个函数，用于计算OEP的偏移。</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026230901041.png" alt="image-20201026230901041"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026230901041.png"></p>
 <ul>
 <li>三种判断方式总结</li>
 </ul>
@@ -291,30 +291,30 @@
 <li>重新计算OEP偏移，再一次进行比较，当第二种方式失效时，PEiD又会重新采用第一种方式，与之不同的是会增加一次对OEP的偏移计算，从而再次进行判断。</li>
 </ol>
 <h4 id="X32动态分析2"><a href="#X32动态分析2" class="headerlink" title="X32动态分析2"></a>X32动态分析2</h4><h5 id="栈回溯寻找函数"><a href="#栈回溯寻找函数" class="headerlink" title="栈回溯寻找函数"></a>栈回溯寻找函数</h5><p>上面的，判断已经是判断的结尾，但是我们需要找到判断的开始位置，了解程序是如何进行判断的，所以借助该跳转，利用栈回溯法，一步步跟回去。</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027220950882.png" alt="image-20201027220950882"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027220950882.png"></p>
 <p>跟过去</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027221435007.png" alt="image-20201027221435007"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027221435007.png"></p>
 <h6 id="函数部分汇编指令"><a href="#函数部分汇编指令" class="headerlink" title="函数部分汇编指令"></a>函数部分汇编指令</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">00452E90                | mov eax,dword ptr fs:[0]                          | 函数入口</span><br><span class="line">00452E96                | push FFFFFFFF                                     |</span><br><span class="line">00452E98                | push uppeid.46CDC8                                | 异常处理</span><br><span class="line">00452E9D                | push eax                                          |</span><br><span class="line">00452E9E                | mov dword ptr fs:[0],esp                          |</span><br><span class="line">00452EA5                | sub esp,10                                        |</span><br><span class="line">00452EA8                | push esi                                          |</span><br><span class="line">00452EA9                | mov esi,dword ptr ss:[esp+24]                     | 参数1</span><br><span class="line">00452EAD                | mov eax,dword ptr ds:[esi+14]                     |</span><br><span class="line">00452EB0                | mov eax,dword ptr ds:[eax+10]                     | 文件OEP(代码起始段RVA)</span><br><span class="line">00452EB3                | push edi                                          |</span><br><span class="line">00452EB4                | mov edi,ecx                                       | this指针</span><br><span class="line">00452EB6                | push eax                                          | 压入代码起始段RVA</span><br><span class="line">00452EB7                | mov ecx,esi                                       |</span><br><span class="line">00452EB9                | call uppeid.453280                                |</span><br><span class="line">00452EBE                | cmp eax,dword ptr ds:[esi+4]                      | 函数返回调整后的OEP --&gt;与.text节进行比较</span><br><span class="line">00452EC1                | jb uppeid.452ED8                                  | 检测成功，跳转</span><br><span class="line"></span><br><span class="line">*******************************OEP不在.text节中，检测失败******************************************************</span><br><span class="line">00452EC3                | pop edi                                           | 分析失败，提前ret</span><br><span class="line">00452EC4                | xor al,al                                         |</span><br><span class="line">00452EC6                | pop esi                                           |</span><br><span class="line">00452EC7                | mov ecx,dword ptr ss:[esp+10]                     |</span><br><span class="line">00452ECB                | mov dword ptr fs:[0],ecx                          |</span><br><span class="line">00452ED2                | add esp,1C                                        |</span><br><span class="line">00452ED5                | ret 8                                             |</span><br><span class="line">************************************************************************************************************</span><br><span class="line"></span><br><span class="line">00452ED8                | push ebx                                          |</span><br><span class="line">00452ED9                | mov ebx,dword ptr ss:[esp+30]                     |</span><br><span class="line">00452EDD                | mov dword ptr ds:[ebx+20],eax                     | 将文件OEP存入内存</span><br><span class="line">00452EE0                | mov ecx,dword ptr ds:[esi+4]                      | 节尾地址</span><br><span class="line">00452EE3                | mov edx,dword ptr ds:[esi]                        |</span><br><span class="line">00452EE5                | sub ecx,eax                                       |</span><br><span class="line">00452EE7                | push ecx                                          |</span><br><span class="line">00452EE8                | add edx,eax                                       | 计算内存地址，用于存放字节码</span><br><span class="line">00452EEA                | push edx                                          |</span><br><span class="line">00452EEB                | lea ecx,dword ptr ss:[esp+14]                     |</span><br><span class="line">00452EEF                | mov ecx,edi                                       |</span><br><span class="line">00452EF2                | call uppeid.45A3E0                                | 函数将OEP代码字节码与特征码进行比较，从而确定是否在识别范围之内</span><br><span class="line">00452EF7                | mov eax,dword ptr ss:[esp+14]                     |</span><br><span class="line">00452EFB                | mov ecx,dword ptr ss:[esp+10]                     |</span><br><span class="line">00452EFF                | mov edx,eax                                       |</span><br><span class="line">00452F01                | sub edx,ecx                                       |</span><br><span class="line">00452F03                | sar edx,2                                         |</span><br><span class="line">00452F06                | push edx                                          |</span><br><span class="line">00452F07                | push eax                                          |</span><br><span class="line">00452F08                | push ecx                                          |</span><br><span class="line">00452F09                | mov dword ptr ss:[esp+30],0                       |</span><br><span class="line">00452F11                | call uppeid.4524B0                                |</span><br><span class="line">00452F16                | mov edi,dword ptr ss:[esp+1C]                     | 在数组下标值都存放在地址 esp+1c中</span><br><span class="line">00452F1A                | mov eax,dword ptr ss:[esp+20]                     |</span><br><span class="line">00452F1E                | add esp,C                                         |</span><br><span class="line">00452F21                | cmp edi,eax                                       |</span><br><span class="line">00452F23                | je uppeid.452F5C                                  |</span><br><span class="line">00452F25                | mov eax,dword ptr ds:[edi]                        |</span><br><span class="line">00452F27                | push eax                                          |</span><br><span class="line">00452F28                | push esi                                          |</span><br><span class="line">00452F29                | push ebx                                          |</span><br><span class="line">00452F2A                | call dword ptr ds:[401E8C]                        | 查询.rdata节是否存在</span><br><span class="line">00452F30                | add esp,C                                         |</span><br><span class="line">00452F33                | test al,al                                        |</span><br><span class="line">00452F35                | jne uppeid.452F7F                                 | 不存在则结束查询分析</span><br><span class="line">00452F37                | mov eax,dword ptr ds:[edi]                        |</span><br><span class="line">00452F39                | push eax                                          |</span><br><span class="line">00452F3A                | push esi                                          |</span><br><span class="line">00452F3B                | lea ecx,dword ptr ds:[eax+eax*2]                  |</span><br><span class="line">00452F3E                | push ebx                                          |</span><br><span class="line">00452F3F                | call dword ptr ds:[ecx*4+401E8C]                  | 再次调用分析函数，返回文件开头指针，保存在eax中</span><br><span class="line">00452F46                | add esp,C                                         |</span><br><span class="line">00452F49                | test al,al                                        |</span><br><span class="line">00452F4B                | jne uppeid.452F7F                                 |</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h5 id="分析特征码校验函数"><a href="#分析特征码校验函数" class="headerlink" title="分析特征码校验函数"></a>分析特征码校验函数</h5><p>地址452EF2处的函数用于文件的特征码校验，次函数我们需要重点分析，运行程序，跟进这个函数中。</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027222817318.png" alt="image-20201027222817318"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027222817318.png"></p>
 <p>下图为此校验函数的部分汇编代码，经过多次调试，发现地址45A432处函数是关键函数</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027223010932.png" alt="image-20201027223010932"></p>
-<p>这个函数在调用前会压入四个参数<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027223759659.png" alt="image-20201027223759659">其中有一个为文件OEP地址，可以在内存中验证。</p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027223010932.png"></p>
+<p>这个函数在调用前会压入四个参数<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027223759659.png">其中有一个为文件OEP地址，可以在内存中验证。</p>
 <h5 id="OEP内存验证"><a href="#OEP内存验证" class="headerlink" title="OEP内存验证"></a>OEP内存验证</h5><p>内存示意图</p>
-<h5 id=""><a href="#" class="headerlink" title=""></a><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027223908425.png" alt="image-20201027223908425"></h5><p>PE解析器验证</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027224016922.png" alt="image-20201027224016922"></p>
-<h5 id="分析字节码检测函数"><a href="#分析字节码检测函数" class="headerlink" title="分析字节码检测函数"></a>分析字节码检测函数</h5><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027224336602.png" alt="image-20201027224336602"></p>
+<h5 id=""><a href="#" class="headerlink" title=""></a><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027223908425.png"></h5><p>PE解析器验证</p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027224016922.png"></p>
+<h5 id="分析字节码检测函数"><a href="#分析字节码检测函数" class="headerlink" title="分析字节码检测函数"></a>分析字节码检测函数</h5><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027224336602.png"></p>
 <p>跟进函数调试后，可以确定函数就是4595E0我们需要寻找的函数，再次跟入函数内部</p>
-<h6 id="重点分析"><a href="#重点分析" class="headerlink" title="重点分析"></a>重点分析</h6><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027224717834.png" alt="image-20201027224717834"></p>
+<h6 id="重点分析"><a href="#重点分析" class="headerlink" title="重点分析"></a>重点分析</h6><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027224717834.png"></p>
 <p>上图四条指令逐句分析</p>
 <ul>
 <li>指令1</li>
 </ul>
 <p>从寄存器ESI中取值放入ECX中，跟随ESI中的地址到内存中，这是程序自带的特征码，用于检测被检测文件所使用的编译器</p>
-<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027224933706.png" alt="image-20201027224933706" style="zoom:67%;" />
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027224933706.png" alt="" style="zoom:67%;" />
 
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027225254078.png" alt="image-20201027225254078"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027225254078.png"></p>
 <ul>
 <li>指令2</li>
 </ul>
@@ -328,7 +328,7 @@
 </ul>
 <p>PEID内置程序特征码与被检查文件的代码字节码进行比较，若不相等则跳转</p>
 <p>跳出函数后，又发现了递归调用</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027230341098.png" alt="image-20201027230341098"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027230341098.png"></p>
 <p>程序重复调用函数，进行被检测文件的字节码与PEID内置特征码进行比较，从而达到判断效果</p>
 <p>比较字节码的下标：**[0x0, 0x1, 0x2 ,0x3, 0x4, 0x5, 0xA, 0xF, 0x10, 0x11, 0x16, 0x18, 0x1D, 0x1E]**</p>
 <h4 id="PEID解析编译器流程"><a href="#PEID解析编译器流程" class="headerlink" title="PEID解析编译器流程"></a>PEID解析编译器流程</h4><ol>
@@ -338,12 +338,12 @@
 <li>将OEP处的字节码与特征码进行比较</li>
 </ol>
 <h4 id="开发环境的伪造"><a href="#开发环境的伪造" class="headerlink" title="开发环境的伪造"></a>开发环境的伪造</h4><p>所用文件为VS2019所编译，PEiD无法检测</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027231645114.png" alt="image-20201027231645114"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027231645114.png"></p>
 <p>查看代码开始出字节码</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027231722194.png" alt="image-20201027231722194"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027231722194.png"></p>
 <p>与VC6++不相符，目标为修改字节码，使PEiD将其识别为VC6++编译器所编译文件</p>
 <p><strong>程序入口地址</strong></p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027231924563.png" alt="image-20201027231924563"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027231924563.png"></p>
 
     </div>
 
