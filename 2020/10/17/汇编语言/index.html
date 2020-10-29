@@ -51,7 +51,7 @@
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017192108476.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017192257883.png">
 <meta property="article:published_time" content="2020-10-17T14:40:21.502Z">
-<meta property="article:modified_time" content="2020-10-29T16:01:06.215Z">
+<meta property="article:modified_time" content="2020-10-29T16:13:39.494Z">
 <meta property="article:author" content="Fish">
 <meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary">
@@ -220,7 +220,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-10-30 00:01:06" itemprop="dateModified" datetime="2020-10-30T00:01:06+08:00">2020-10-30</time>
+                <time title="Modified: 2020-10-30 00:13:39" itemprop="dateModified" datetime="2020-10-30T00:13:39+08:00">2020-10-30</time>
               </span>
 
           
@@ -278,46 +278,46 @@
 <h6 id="测试代码1"><a href="#测试代码1" class="headerlink" title="测试代码1"></a>测试代码1</h6><p>由于汇编代码简单，就不在过多赘述</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov eax,1</span><br><span class="line">sub eax,1</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017160235303.png" alt="image-20201017160235303"></p>
-<p>我们将ZF标志修改为0<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017160321754.png" alt="image-20201017160321754">单击 F8单步运行汇编代，当两行汇编代码运行完毕后观察标志寄存器<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017160733913.png" alt="image-20201017160733913">可以看到ZF标志变为1。</p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017160235303.png"></p>
+<p>我们将ZF标志修改为0<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017160321754.png">单击 F8单步运行汇编代，当两行汇编代码运行完毕后观察标志寄存器<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017160733913.png">可以看到ZF标志变为1。</p>
 <h6 id="测试代码2"><a href="#测试代码2" class="headerlink" title="测试代码2"></a>测试代码2</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov eax,2</span><br><span class="line">sub eax,1</span><br></pre></td></tr></table></figure>
 
 <p>上述汇编代码的运算结果不为0，按照ZF标志位的规则ZF=0,为了方便观察，我们将调试器中的ZF标志位修改为1，</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017161548206.png" alt="image-20201017161548206">然后运行如图两行汇编代码<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017161639235.png" alt="image-20201017161639235">两行汇编代码执行完毕，再次观察寄存器<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017161748674.png" alt="image-20201017161748674">和预料的一样，ZF标志位变为0。</p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017161548206.png">然后运行如图两行汇编代码<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017161639235.png">两行汇编代码执行完毕，再次观察寄存器<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017161748674.png">和预料的一样，ZF标志位变为0。</p>
 <p>上文演示的只是最简单的ZF标志位应用，ZF标志位更多时候是配合JCC指令一起使用，关于JCC指令会在下文讲述。</p>
 <h4 id="PF标志示例"><a href="#PF标志示例" class="headerlink" title="PF标志示例"></a>PF标志示例</h4><p>PF为奇偶标志位，PF标志主要检验运算结果的二进制形式中1的个数，如果1的个数是奇数个，那么PF标志为0，如果是偶数个，则PF标志为1</p>
 <h6 id="测试代码1-1"><a href="#测试代码1-1" class="headerlink" title="测试代码1"></a>测试代码1</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov al,1</span><br><span class="line">add al,A</span><br></pre></td></tr></table></figure>
 
 <p>代码执行后，al中存储的值为0xB,其二进制表达式为00001011B,有3个1，按照PF标志的变化规则，当代码执行完毕后，PF为0，下面验证</p>
-<p>代码运行前标志：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017163111707.png" alt="image-20201017163111707"></p>
-<p>代码运行后标志：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017163144578.png" alt="image-20201017163144578"></p>
+<p>代码运行前标志：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017163111707.png"></p>
+<p>代码运行后标志：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017163144578.png"></p>
 <p>符合预期结果</p>
 <h6 id="测试代码2-1"><a href="#测试代码2-1" class="headerlink" title="测试代码2"></a>测试代码2</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov al,1</span><br><span class="line">or al,2		</span><br></pre></td></tr></table></figure>
 
 <p>代码执行后，al中存储的值为3，二进制表达式为00000011B,有偶数个1，按照理论，代码运行够PF为1,验证</p>
-<p>前：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017163344488.png" alt="image-20201017163344488"></p>
-<p>后：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017163404456.png" alt="image-20201017163404456"></p>
+<p>前：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017163344488.png"></p>
+<p>后：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017163404456.png"></p>
 <h4 id="SF标志示例"><a href="#SF标志示例" class="headerlink" title="SF标志示例"></a>SF标志示例</h4><p>SF为符号标志位，用于判断运算结果是否为负，如果结果为负，SF=1，如果结果非负，则SF=0</p>
 <p>关于计算机中的有符号数和无符号数不在赘述。</p>
 <h6 id="测试代码1-2"><a href="#测试代码1-2" class="headerlink" title="测试代码1"></a>测试代码1</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov al,81</span><br><span class="line">add al,1		</span><br></pre></td></tr></table></figure>
 
-<p>前：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017171033622.png" alt="image-20201017171033622"></p>
-<p>后：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017184406189.png" alt="image-20201017184406189"></p>
+<p>前：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017171033622.png"></p>
+<p>后：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017184406189.png"></p>
 <h6 id="测试代码2-2"><a href="#测试代码2-2" class="headerlink" title="测试代码2"></a>测试代码2</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov al,81</span><br><span class="line">add al,7F</span><br></pre></td></tr></table></figure>
 
 <p>前：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017184406189.png"></p>
-<p>后：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017184446926.png" alt="image-20201017184446926"></p>
+<p>后：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017184446926.png"></p>
 <h4 id="CF标志示例"><a href="#CF标志示例" class="headerlink" title="CF标志示例"></a>CF标志示例</h4><p>CF为进位标志位。一般情况下，在进行<u><strong>无符号数</strong></u>运算的时候，它记录了运算结果的最高有效位向更高位的进位值，或从更高位的借位值</p>
 <h6 id="测试代码1-3"><a href="#测试代码1-3" class="headerlink" title="测试代码1"></a>测试代码1</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov al,98h</span><br><span class="line">add al,al	</span><br><span class="line">add al,al</span><br></pre></td></tr></table></figure>
 
-<p>初始：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017191303736.png" alt="image-20201017191303736"></p>
-<p>第一次add：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017191548519.png" alt="image-20201017191548519">0x98+0x98=0x130,超出了al寄存器的存储范围，进位为1，存放在CF</p>
-<p>第二次add：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017191749446.png" alt="image-20201017191749446">0x30+0x30=0x60,没有超出al寄存器的存储范围，进位为0，同样存放在CF中</p>
+<p>初始：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017191303736.png"></p>
+<p>第一次add：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017191548519.png">0x98+0x98=0x130,超出了al寄存器的存储范围，进位为1，存放在CF</p>
+<p>第二次add：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017191749446.png">0x30+0x30=0x60,没有超出al寄存器的存储范围，进位为0，同样存放在CF中</p>
 <h6 id="测试代码2-3"><a href="#测试代码2-3" class="headerlink" title="测试代码2"></a>测试代码2</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov al,97h</span><br><span class="line">sub al,98h</span><br><span class="line">sub al,al</span><br></pre></td></tr></table></figure>
 
-<p>初始：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017192030877.png" alt="image-20201017192030877"></p>
-<p>第一次sub：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017192108476.png" alt="image-20201017192108476">被减数 &lt;= 减数，所以需要借位，CF记录了向更高位的借位值</p>
-<p>第二次sub：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017192257883.png" alt="image-20201017192257883">被减数 &gt;= 减数，不需要借位，CF记录的借位值为0</p>
+<p>初始：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017192030877.png"></p>
+<p>第一次sub：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017192108476.png">被减数 &lt;= 减数，所以需要借位，CF记录了向更高位的借位值</p>
+<p>第二次sub：<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201017192257883.png">被减数 &gt;= 减数，不需要借位，CF记录的借位值为0</p>
 <h4 id="OF标志示例"><a href="#OF标志示例" class="headerlink" title="OF标志示例"></a>OF标志示例</h4><p>首先说溢出，在进行<u><strong>有符号数</strong></u>运算的时候，如果结果超过了机器所能表示的范围称为溢出。溢出只针对<u><strong>有符号数</strong></u></p>
 <p>OF为运算溢出标志。</p>
 <h6 id="测试代码1-4"><a href="#测试代码1-4" class="headerlink" title="测试代码1"></a>测试代码1</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov al,98</span><br><span class="line">add al,99</span><br></pre></td></tr></table></figure>

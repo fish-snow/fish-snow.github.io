@@ -59,7 +59,7 @@
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027231722194.png">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201027231924563.png">
 <meta property="article:published_time" content="2020-10-26T15:22:27.755Z">
-<meta property="article:modified_time" content="2020-10-29T16:08:43.504Z">
+<meta property="article:modified_time" content="2020-10-29T16:12:53.637Z">
 <meta property="article:author" content="Fish">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201028210403593.png">
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-10-30 00:08:43" itemprop="dateModified" datetime="2020-10-30T00:08:43+08:00">2020-10-30</time>
+                <time title="Modified: 2020-10-30 00:12:53" itemprop="dateModified" datetime="2020-10-30T00:12:53+08:00">2020-10-30</time>
               </span>
 
           
@@ -242,7 +242,7 @@
 
       
         <p>​                                                                </p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201028210403593.png" alt="image-20201028210403593"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201028210403593.png"></p>
 <a id="more"></a>
 
 <p><strong>分析文件为Visual C 6++所编译的文件。PEiD为脱壳后的v0.94版</strong></p>
@@ -263,20 +263,20 @@
 <ul>
 <li>PE中节的知识<br><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026212656056.png"></li>
 </ul>
-<h4 id="IDA静态分析"><a href="#IDA静态分析" class="headerlink" title="IDA静态分析"></a>IDA静态分析</h4><h5 id="分析1"><a href="#分析1" class="headerlink" title="分析1"></a>分析1</h5><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026221402781.png" alt="image-20201026221402781"></p>
+<h4 id="IDA静态分析"><a href="#IDA静态分析" class="headerlink" title="IDA静态分析"></a>IDA静态分析</h4><h5 id="分析1"><a href="#分析1" class="headerlink" title="分析1"></a>分析1</h5><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026221402781.png"></p>
 <p>​    这里解释一下，在PE结构中，一个节的大小为40,转化为16进制为28H。IDA中ecx存储节的数量 <strong>乘5</strong> 在与之 <strong>乘8</strong> 也就是 *<em>（NumberOfSection(节的数量)  * 40）*</em>，相当于计算该PE的节在文件内存中所占大小，在加上edx(指向.text节首地址的指针)，相当于定位到了节的最后面。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.text:00438CE0                 mov     ebp, [edx+ecx*8-18h]</span><br></pre></td></tr></table></figure>
 
 <p>汇编代码中的**-18H**，是从节尾开始减</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026214005783.png" alt="image-20201026214005783"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026214005783.png"></p>
 <p>根据节的结构，读取的数据为.data文件中所占大小为00009000H。[edx+ecx*8-28h]原理和上述一样不在做分析。</p>
-<h5 id="分析2"><a href="#分析2" class="headerlink" title="分析2"></a>分析2</h5><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026221436634.png" alt="image-20201026221436634"></p>
-<h5 id="分析3"><a href="#分析3" class="headerlink" title="分析3"></a>分析3</h5><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026221905060.png" alt="image-20201026221905060"  />
+<h5 id="分析2"><a href="#分析2" class="headerlink" title="分析2"></a>分析2</h5><p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026221436634.png"></p>
+<h5 id="分析3"><a href="#分析3" class="headerlink" title="分析3"></a>分析3</h5><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026221905060.png" alt=""  />
 
 <h4 id="X32动态分析1"><a href="#X32动态分析1" class="headerlink" title="X32动态分析1"></a>X32动态分析1</h4><h5 id="分析1-1"><a href="#分析1-1" class="headerlink" title="分析1"></a>分析1</h5><p>在这个函数的开始地址处，开辟了大量的栈空间，定义了大量的一字节数据变量，用于存取PE文件的特征码，但是上面的分析并没有用到特征码。所以用动调的方式再次分析，将最后的跳转nop掉，分析特征码的作用。</p>
 <p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026223447239.png"></p>
 <p>观察此时的寄存器，ECX存储的为指向.text节首地址的指针，EDX中存储的为程序的OEP。</p>
-<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026223617001.png" alt="image-20201026223617001"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026223617001.png"></p>
 <h5 id="分析2-1"><a href="#分析2-1" class="headerlink" title="分析2"></a>分析2</h5><p>当OEP的VA不在.data节或者.text节中的，会将其开始的字节码与内置的特征码进行比较，其判断该程序所使用的编译器是哪个版本</p>
 <p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201026224943273.png"></p>
 <h5 id="分析3-1"><a href="#分析3-1" class="headerlink" title="分析3"></a>分析3</h5><p>继续向下跟踪，一直F8，这里的比较方式和在IDA中的比较方式一样，唯一的不同点就是多加了一个函数，用于计算OEP的偏移。</p>
