@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-fish.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bulefish32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/yellowfish16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta property="og:type" content="article">
+<meta property="og:title" content="🐱‍🐉Win32学习记录-2(线程控制与临界区)">
+<meta property="og:url" content="http://example.com/2020/11/05/Win32-3/index.html">
+<meta property="og:site_name" content="Fish">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/%E4%B8%8B%E8%BD%BD.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201103194832013.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201103195026242.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105194833216.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105195059526.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105203720477.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105204003677.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105204447624.png">
+<meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105210326244.png">
+<meta property="article:published_time" content="2020-11-05T13:20:56.052Z">
+<meta property="article:modified_time" content="2020-11-05T13:26:06.013Z">
+<meta property="article:author" content="Fish">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/%E4%B8%8B%E8%BD%BD.png">
+
+<link rel="canonical" href="http://example.com/2020/11/05/Win32-3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>🐱‍🐉Win32学习记录-2(线程控制与临界区) | Fish</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Fish</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">1</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">0</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">8</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/05/Win32-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E7%8D%AD%E7%8D%AD.JPG">
+      <meta itemprop="name" content="Fish">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fish">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          🐱‍🐉Win32学习记录-2(线程控制与临界区)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-11-05 21:20:56 / Modified: 21:26:06" itemprop="dateCreated datePublished" datetime="2020-11-05T21:20:56+08:00">2020-11-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/%E4%B8%8B%E8%BD%BD.png" style="zoom: 50%;" />
+
+<a id="more"></a>
+
+<h3 id="多线程之间的资源抢占问题"><a href="#多线程之间的资源抢占问题" class="headerlink" title="多线程之间的资源抢占问题"></a>多线程之间的资源抢占问题</h3><p>​        当多个线程使用同一个资源时，会出现资源抢占问题</p>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201103194832013.png" style="zoom:80%;" />
+
+<p>​        这个程序功能为向文本框中加数字，每一次加一，两个线程同时加，每一个线程最多加到1000，当两个线程结束后，文本框中的期望值为2000。但是当同时按下两个按钮等待线程结束后，文本框中的结果却与期望值有偏差</p>
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201103195026242.png" style="zoom:80%;" />
+
+
+
+<ul>
+<li><p>线程函数1 代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc1</span><span class="params">(LPVOID lpParameter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	TCHAR szBuffer[<span class="number">10</span>];</span><br><span class="line">	DWORD dwIndex = <span class="number">0</span>;</span><br><span class="line">	DWORD dwCount;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (dwIndex &lt; <span class="number">1000</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		GetWindowText(hEDIT, szBuffer, <span class="number">10</span>);</span><br><span class="line">		<span class="keyword">int</span> check = <span class="built_in">sscanf</span>(szBuffer, <span class="string">&quot;%d&quot;</span>, &amp;dwCount);</span><br><span class="line">		dwCount++;</span><br><span class="line">		<span class="built_in">memset</span>(szBuffer, <span class="number">0</span>, <span class="number">10</span>);</span><br><span class="line">		<span class="built_in">sprintf</span>(szBuffer, <span class="string">&quot;%d&quot;</span>, dwCount);</span><br><span class="line">		SetWindowText(hEDIT, szBuffer);</span><br><span class="line">		dwIndex++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<ul>
+<li><p>线程函数2 代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc2</span><span class="params">(LPVOID lpParameter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	TCHAR szBuffer[<span class="number">10</span>];</span><br><span class="line">	DWORD dwIndex = <span class="number">0</span>;</span><br><span class="line">	DWORD dwCount;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (dwIndex &lt; <span class="number">1000</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		GetWindowText(hEDIT, szBuffer, <span class="number">10</span>);</span><br><span class="line">		<span class="keyword">int</span> check = <span class="built_in">sscanf</span>(szBuffer, <span class="string">&quot;%d&quot;</span>, &amp;dwCount);</span><br><span class="line">		dwCount++;</span><br><span class="line">		<span class="built_in">memset</span>(szBuffer, <span class="number">0</span>, <span class="number">10</span>);</span><br><span class="line">		<span class="built_in">sprintf</span>(szBuffer, <span class="string">&quot;%d&quot;</span>, dwCount);</span><br><span class="line">		SetWindowText(hEDIT, szBuffer);</span><br><span class="line">		dwIndex++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两个线程函数步骤如下</p>
+<ol>
+<li>文本框中取值</li>
+<li>字符串 -&gt; 数字</li>
+<li>数字自加1</li>
+<li>数字 -&gt; 字符串</li>
+<li>放回文本框中</li>
+</ol>
+</li>
+</ul>
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>  ​        在windows系统中，一个线程使用一个CUP,但是电脑中的CPU有限，而电脑中又有很多进程，每一个进程中又存在很多线程，所以开发人员在设计的时候规定每一个线程使用CPU的时间为20ms，当一个线程20ms的时间用尽，只有等待下次为他分配时间时才可以继续工作。所以当两个线程同时操作一个全局变量时就会出现问题。</p>
+<p>  <img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105194833216.png" style="zoom: 67%;" /><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105195059526.png"></p>
+<h5 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h5><p>​        Windows设计出了临界区来解决线程抢占资源的问题</p>
+<p>​        当多个设计程序多个线程都涉及到某个全局变量时，可以使用临界区来解决这个问题，临界区可以理解为给这个全局变量假定了一个令牌，这个令牌在程序中只有个块，只有拿到令牌的人才可以对全局变量进行操作。</p>
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105203720477.png" style="zoom:67%;" />
+
+<p>​        将上面的线程函数做如下下修改，就可以解决多线程使用同一个全局变量的问题。</p>
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105204003677.png" style="zoom:80%;" />
+
+<h4 id="临界区结构体部分成员解释"><a href="#临界区结构体部分成员解释" class="headerlink" title="临界区结构体部分成员解释"></a>临界区结构体部分成员解释</h4><p>结构体定义如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">RTL_CRITICAL_SECTION</span> &#123;</span></span><br><span class="line">    PRTL_CRITICAL_SECTION_DEBUG DebugInfo;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">//  The following three fields control entering and exiting the critical</span></span><br><span class="line">    <span class="comment">//  section for the resource</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    LONG LockCount;</span><br><span class="line">    LONG RecursionCount;</span><br><span class="line">    HANDLE OwningThread;        <span class="comment">// from the thread&#x27;s ClientId-&gt;UniqueThread</span></span><br><span class="line">    HANDLE LockSemaphore;</span><br><span class="line">    ULONG_PTR SpinCount;        <span class="comment">// force size on 64-bit systems when packed</span></span><br><span class="line">&#125; RTL_CRITICAL_SECTION, *PRTL_CRITICAL_SECTION;</span><br></pre></td></tr></table></figure>
+
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105204447624.png" style="zoom:80%;" />
+
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p>​        临界区使用不当可能会造成死锁，当定义两个锁及以上使用需要格外小心，否则程序就可能造成死锁。下图就是死锁的基本原理，当使用临界区时，应该尽量注意将使用锁的使用顺序，经量将锁的使用顺序变成一样的。</p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20201105210326244.png"></p>
+<h4 id="试写死锁程序"><a href="#试写死锁程序" class="headerlink" title="试写死锁程序"></a>试写死锁程序</h4><p>​         死锁程序没有任何作用，但是可以加深对临界区的理解，且所谓的死锁程序只是逻辑上的，当写出来后也不一定会立刻生效。</p>
+<ul>
+<li><p>线程1代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc1</span><span class="params">(LPVOID lpParameter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	TCHAR szBuffer[<span class="number">10</span>];</span><br><span class="line">	DWORD dwIndex = <span class="number">0</span>;</span><br><span class="line">	DWORD dwCount;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (dwIndex &lt; <span class="number">1000</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		EnterCriticalSection(&amp;cs1);<span class="comment">//锁1</span></span><br><span class="line">		***********容易产生死锁的位置***********</span><br><span class="line">		EnterCriticalSection(&amp;cs2);<span class="comment">//锁2</span></span><br><span class="line"></span><br><span class="line">		GetWindowText(hEDIT, szBuffer, <span class="number">10</span>);</span><br><span class="line">		<span class="keyword">int</span> check = <span class="built_in">sscanf</span>(szBuffer, <span class="string">&quot;%d&quot;</span>, &amp;dwCount);</span><br><span class="line">		dwCount++;</span><br><span class="line">		<span class="built_in">memset</span>(szBuffer, <span class="number">0</span>, <span class="number">10</span>);</span><br><span class="line">		<span class="built_in">sprintf</span>(szBuffer, <span class="string">&quot;%d&quot;</span>, dwCount);</span><br><span class="line">		SetWindowText(hEDIT, szBuffer);</span><br><span class="line">		dwIndex++;</span><br><span class="line">		LeaveCriticalSection(&amp;cs2);</span><br><span class="line"></span><br><span class="line">		LeaveCriticalSection(&amp;cs1);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<ul>
+<li><p>线程2代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc2</span><span class="params">(LPVOID lpParameter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	TCHAR szBuffer[<span class="number">10</span>];</span><br><span class="line">	DWORD dwIndex = <span class="number">0</span>;</span><br><span class="line">	DWORD dwCount;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (dwIndex &lt; <span class="number">1000</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		EnterCriticalSection(&amp;cs2);<span class="comment">//锁2</span></span><br><span class="line">		***********容易产生死锁的位置***********</span><br><span class="line">		EnterCriticalSection(&amp;cs1);<span class="comment">//锁1</span></span><br><span class="line"></span><br><span class="line">		GetWindowText(hEDIT, szBuffer, <span class="number">10</span>);</span><br><span class="line">		<span class="keyword">int</span> check = <span class="built_in">sscanf</span>(szBuffer, <span class="string">&quot;%d&quot;</span>, &amp;dwCount);</span><br><span class="line">		dwCount++;</span><br><span class="line">		<span class="built_in">memset</span>(szBuffer, <span class="number">0</span>, <span class="number">10</span>);</span><br><span class="line">		<span class="built_in">sprintf</span>(szBuffer, <span class="string">&quot;%d&quot;</span>, dwCount);</span><br><span class="line">		SetWindowText(hEDIT, szBuffer);</span><br><span class="line">		dwIndex++;</span><br><span class="line"></span><br><span class="line">		LeaveCriticalSection(&amp;cs1);</span><br><span class="line"></span><br><span class="line">		LeaveCriticalSection(&amp;cs2);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/02/Win32-2/" rel="prev" title="🐱‍🐉Win32学习记录-2(创建线程)">
+      <i class="fa fa-chevron-left"></i> 🐱‍🐉Win32学习记录-2(创建线程)
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B9%8B%E9%97%B4%E7%9A%84%E8%B5%84%E6%BA%90%E6%8A%A2%E5%8D%A0%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">多线程之间的资源抢占问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90"><span class="nav-number">1.1.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.2.1.</span> <span class="nav-text">解决方案</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%B4%E7%95%8C%E5%8C%BA%E7%BB%93%E6%9E%84%E4%BD%93%E9%83%A8%E5%88%86%E6%88%90%E5%91%98%E8%A7%A3%E9%87%8A"><span class="nav-number">1.3.</span> <span class="nav-text">临界区结构体部分成员解释</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">2.</span> <span class="nav-text">死锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%95%E5%86%99%E6%AD%BB%E9%94%81%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.1.</span> <span class="nav-text">试写死锁程序</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fish"
+      src="/images/%E7%8D%AD%E7%8D%AD.JPG">
+  <p class="site-author-name" itemprop="name">Fish</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fish</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
